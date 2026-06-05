@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/app_colors.dart';
 import 'language_screen.dart';
@@ -9,114 +10,167 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: kBackground,
+
       body: SafeArea(
         child: GestureDetector(
-          onHorizontalDragEnd: (details) {
+          onHorizontalDragEnd: (_) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const LanguageScreen(),
+                builder: (_) =>
+                    const LanguageScreen(),
               ),
             );
           },
+
           child: Column(
             children: [
+
               const Spacer(),
 
               Container(
-                width: 120,
-                height: 120,
+                width: 130,
+                height: 130,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: const [
+                  borderRadius:
+                      BorderRadius.circular(28),
+                  boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
+                      color: kPrimary.withValues(alpha: 0.15),
                       blurRadius: 20,
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
                 child: const Icon(
-                  Icons.verified,
-                  size: 70,
-                  color: AppColors.primary,
+                  Icons.construction_rounded,
+                  size: 75,
+                  color: kPrimary,
                 ),
               ),
 
               const SizedBox(height: 30),
 
-              const Text(
+              Text(
                 "Saksham Attendance",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                style: GoogleFonts.poppins(
+                  fontSize: 30,
+                  fontWeight:
+                      FontWeight.w700,
+                  color: kPrimary,
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              const Text(
+              Text(
                 "Offline Attendance Made Easy",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: AppColors.textLight,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: kTextSecondary,
+                  fontWeight:
+                      FontWeight.w500,
                 ),
               ),
 
               const SizedBox(height: 6),
 
-              const Text(
+              Text(
                 "आसान ऑफलाइन उपस्थिति",
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 15,
-                  color: AppColors.textLight,
+                  color: kTextSecondary,
                 ),
               ),
 
               const SizedBox(height: 40),
 
-              const Icon(
-                Icons.swipe,
-                size: 32,
-                color: AppColors.primary,
-              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: kPrimaryLight,
+                  borderRadius:
+                      BorderRadius.circular(
+                    30,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize:
+                      MainAxisSize.min,
+                  children: [
 
-              const SizedBox(height: 10),
+                    const Icon(
+                      Icons.swipe,
+                      color: kPrimary,
+                    ),
 
-              const Text(
-                "Swipe to Continue",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.textLight,
+                    const SizedBox(width: 10),
+
+                    Text(
+                      "Swipe To Continue",
+                      style:
+                          GoogleFonts.poppins(
+                        color: kPrimary,
+                        fontWeight:
+                            FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
               const Spacer(),
 
               Container(
-                margin: const EdgeInsets.only(
-                  bottom: 30,
+                margin:
+                    const EdgeInsets.only(
+                  bottom: 25,
                 ),
-                padding: const EdgeInsets.symmetric(
+                padding:
+                    const EdgeInsets.symmetric(
                   horizontal: 18,
-                  vertical: 10,
+                  vertical: 12,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.shield,
-                      color: AppColors.primary,
+                  borderRadius:
+                      BorderRadius.circular(
+                    30,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black
+                          .withValues(alpha: 0.04),
+                      blurRadius: 8,
                     ),
-                    SizedBox(width: 8),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize:
+                      MainAxisSize.min,
+                  children: [
+
+                    const Icon(
+                      Icons.verified_user,
+                      color: kPrimary,
+                    ),
+
+                    const SizedBox(width: 8),
+
                     Text(
-                      "Trusted by thousands of workers",
+                      "Trusted by Workers",
+                      style:
+                          GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight:
+                            FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),

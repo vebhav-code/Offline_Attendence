@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../models/attendance_model.dart';
+import '../repositories/local_repository.dart';
 import '../utils/app_colors.dart';
-import 'face_verification_screen.dart';
 
 class AttendanceCameraScreen extends StatefulWidget {
   const AttendanceCameraScreen({super.key});
@@ -14,84 +18,153 @@ class AttendanceCameraScreen extends StatefulWidget {
 
 class _AttendanceCameraScreenState
     extends State<AttendanceCameraScreen> {
-  Future<void> _markAttendance() async {
-    try {
-      final picker = ImagePicker();
+  final ImagePicker picker = ImagePicker();
 
-      final image = await picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-      );
+  File? capturedImage;
 
-      if (image == null) {
-        if (mounted) {
-          Navigator.pop(context);
-        }
-        return;
-      }
+  bool loading = false;
 
-      if (!mounted) return;
+  Future<void> openCamera() async {
+    final image = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => FaceVerificationScreen(
-            imagePath: image.path,
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
+    if (image == null) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Camera Error: $e",
-          ),
-        ),
-      );
-    }
+    setState(() {
+      capturedImage = File(image.path);
+    });
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void markAttendance() {
+    if (capturedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Please capture selfie first",
+          ),
+        ),
+      );
+      return;
+    }
 
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        _markAttendance();
-      },
+    LocalRepository.attendance.add(
+      AttendanceModel(
+        workerId: null,
+        date: DateTime.now(),
+        status: "Present",
+        selfiePath: capturedImage!.path,
+        markedAt: DateTime.now(),
+      ),
     );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Attendance Saved",
+        ),
+      ),
+    );
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: kBackground,
       appBar: AppBar(
         title: const Text(
-          "Mark Attendance",
+          "Attendance Camera",
         ),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
       ),
-      body: const Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 20),
-            Text(
-              "Opening Camera...",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
+            buildCameraPreview(),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton.icon(
+                onPressed: openCamera,
+                icon: const Icon(
+                  Icons.camera_alt,
+                ),
+                label: const Text(
+                  "Open Camera",
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kPrimary,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: markAttendance,
+                child: Text(
+                  "MARK ATTENDANCE",
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildCameraPreview() {
+    return Container(
+      height: 350,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.grey.shade300,
+        ),
+      ),
+      child: capturedImage == null
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.camera_alt_outlined,
+                  size: 80,
+                  color: Colors.grey.shade500,
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  "No Photo Captured",
+                  style: GoogleFonts.poppins(
+                    color: Colors.grey,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.file(
+                capturedImage!,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
     );
   }
 }
